@@ -22,12 +22,13 @@ app.use('/api/todos', require('./routes/todos'));
 
 // Serve static assets in production (if applicable)
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('../frontend/dist'));
+    app.use(express.static(path.resolve(__dirname, '../frontend/dist')));
+    
+    // Send a generic API response if no static file is found
     app.use((req, res) => {
-        res.sendFile(path.resolve(__dirname, '..', 'frontend', 'dist', 'index.html'));
+        res.status(200).send("Backend API is running. Please use the frontend app to interact.");
     });
 }
-// 
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server started on port ${PORT} (0.0.0.0)`));
