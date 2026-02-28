@@ -12,6 +12,7 @@ import Alarm from './components/Alarm';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
+import Footer from './components/Footer';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, ListTodo, Timer, Bell, Loader2 } from 'lucide-react';
@@ -260,10 +261,7 @@ function App() {
         } />
       </Routes>
       
-      {/* Footer */}
-      <footer className="w-full text-center py-6 text-white/50 text-sm mt-auto z-50 relative pointer-events-auto">
-        Made By <a href="https://rabibhagat.com.np" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors hover:underline">Rabi Bhagat</a>
-      </footer>
+      <Footer />
     </div>
   );
 }
