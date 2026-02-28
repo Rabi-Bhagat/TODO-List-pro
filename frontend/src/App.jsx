@@ -13,6 +13,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Footer from './components/Footer';
+import LoadingScreen from './components/LoadingScreen';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, ListTodo, Timer, Bell, Loader2 } from 'lucide-react';
@@ -20,11 +21,7 @@ import { Plus, ListTodo, Timer, Bell, Loader2 } from 'lucide-react';
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-transparent">
-      <Loader2 className="text-white animate-spin" size={48} />
-    </div>
-  );
+  if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" />;
   return children;
 };
@@ -38,6 +35,12 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('tasks');
+  const [notifications, setNotifications] = useState([]);
+
+  const addNotification = (title, message, type = 'info') => {
+    const newNotif = { id: Date.now().toString(), title, message, type, time: new Date() };
+    setNotifications(prev => [newNotif, ...prev].slice(0, 20)); // Keep last 20
+  };
 
   useEffect(() => {
     localStorage.setItem('agile-theme', darkTheme ? 'dark' : 'light');
@@ -67,6 +70,7 @@ function App() {
       const res = await api.post('/todos', taskData);
       setTasks([res.data, ...tasks]);
       setIsModalOpen(false);
+      addNotification('Task Created', `"${res.data.task}" was added to your list.`, 'success');
     } catch (err) {
       console.error("Failed to add task", err);
     }
@@ -78,6 +82,12 @@ function App() {
       const res = await api.put(`/todos/${id}`, { completed: !task.completed });
       setTasks(tasks.map(t => t._id === id ? res.data : t));
       
+      addNotification(
+        'Task Updated', 
+        `"${task.task}" marked as ${!task.completed ? 'completed' : 'active'}.`, 
+        !task.completed ? 'success' : 'info'
+      );
+
       // If task was just completed, refresh the profile to update XP and Streaks
       if (!task.completed) {
         await refreshProfile();
@@ -88,9 +98,13 @@ function App() {
   };
 
   const deleteTask = async (id) => {
+    const taskToDelete = tasks.find(t => t._id === id);
     try {
       await api.delete(`/todos/${id}`);
       setTasks(tasks.filter(t => t._id !== id));
+      if (taskToDelete) {
+        addNotification('Task Deleted', `"${taskToDelete.task}" was removed.`, 'warning');
+      }
     } catch (err) {
       console.error("Failed to delete task", err);
     }
@@ -102,11 +116,7 @@ function App() {
     return matchesCategory && matchesSearch;
   });
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-transparent">
-      <Loader2 className="text-white animate-spin" size={48} />
-    </div>
-  );
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="app-container">
@@ -118,6 +128,8 @@ function App() {
           setDarkTheme={setDarkTheme}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          notifications={notifications}
+          setNotifications={setNotifications}
         />
       )}
 

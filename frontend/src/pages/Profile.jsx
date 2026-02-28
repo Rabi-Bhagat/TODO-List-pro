@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Save, Lock, ShieldCheck, AlertCircle, CheckCircle, Camera, Loader2, Sparkles, LogOut, Star, Flame, Eye, EyeOff } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Profile = () => {
     const { user, updateProfile, changePassword, logout, error } = useAuth();
@@ -12,6 +12,7 @@ const Profile = () => {
         bio: user?.bio || '',
         profileImage: user?.profileImage || ''
     });
+    const location = useLocation();
     const [passwordData, setPasswordData] = useState({
         oldPassword: '',
         newPassword: '',
@@ -33,6 +34,18 @@ const Profile = () => {
         setPasswordMsg({ type, text });
         setTimeout(() => setPasswordMsg({ type: '', text: '' }), 4000);
     };
+
+    React.useEffect(() => {
+        if (location.hash) {
+            const id = location.hash.replace('#', '');
+            const element = document.getElementById(id);
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+    }, [location.hash]);
 
     const handleProfileUpdate = async (e) => {
         e.preventDefault();
@@ -140,7 +153,7 @@ const Profile = () => {
                                 <div className="mt-8 pt-8 border-t border-white/5 space-y-6">
                                     {/* Gamification Stats */}
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-4 text-center shadow-inner">
+                                        <div id="level" className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-4 text-center shadow-inner transition-all">
                                             <div className="text-3xl font-black text-indigo-400 tracking-tighter">{user?.level || 1}</div>
                                             <div className="flex items-center justify-center gap-1 mt-1">
                                                 <Star className="text-indigo-400" size={10} />
@@ -157,7 +170,7 @@ const Profile = () => {
                                     </div>
 
                                     {/* Training Calendar */}
-                                    <div className="flex flex-col items-center w-full mx-auto relative z-10 py-8 bg-white/[0.02] rounded-3xl mb-6 border border-white/5 shadow-2xl">
+                                    <div id="streak" className="flex flex-col items-center w-full mx-auto relative z-10 py-8 bg-white/[0.02] rounded-3xl mb-6 border border-white/5 shadow-2xl transition-all">
                                         <div className="flex items-center justify-between w-full max-w-[300px] mb-6 px-2">
                                             <h3 className="text-xl font-medium text-white tracking-wide">Streak Calendar</h3>
                                             <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest bg-indigo-500/20 px-3 py-1 rounded-full">

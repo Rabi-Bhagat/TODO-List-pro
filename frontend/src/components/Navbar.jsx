@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Search, Moon, Sun, ListTodo, User, LogOut, Bell, Timer, Sparkles, Flame, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { AnimatePresence } from 'framer-motion';
 
-const Navbar = ({ searchQuery, setSearchQuery }) => {
+const Navbar = ({ searchQuery, setSearchQuery, notifications = [], setNotifications }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -78,30 +80,70 @@ const Navbar = ({ searchQuery, setSearchQuery }) => {
       {user && (
         <div className="md:hidden flex items-center justify-between w-full gap-2 px-1">
           <div className="flex items-center gap-2">
-            <motion.div 
-              className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/20 px-2 py-1.5 rounded-xl text-orange-400 cursor-default"
+            <Link 
+              to="/profile#streak"
+              className="flex items-center gap-1.5 bg-orange-500/10 hover:bg-orange-500/20 transition-colors border border-orange-500/20 px-2 py-1.5 rounded-xl text-orange-400 cursor-pointer"
               title={`Current Streak: ${user.currentStreak || 0} days`}
             >
               <Flame size={14} className={`${(user.currentStreak || 0) > 0 ? 'animate-pulse text-orange-500' : 'opacity-50'}`} />
               <span className="text-[11px] font-bold">{user.currentStreak || 0}</span>
-            </motion.div>
+            </Link>
 
-            <motion.div 
-              className="flex items-center gap-1 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1.5 rounded-xl text-indigo-400"
+            <Link 
+              to="/profile#level"
+              className="flex items-center gap-1 bg-indigo-500/10 hover:bg-indigo-500/20 transition-colors border border-indigo-500/20 px-2 py-1.5 rounded-xl text-indigo-400 cursor-pointer"
               title={`XP: ${user.xp || 0}`}
             >
               <Star size={12} className="text-indigo-400" />
               <span className="text-[11px] font-bold">Lvl {user.level || 1}</span>
-            </motion.div>
+            </Link>
           </div>
 
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10"
-          >
-            <Bell size={16} />
-          </motion.button>
+          <div className="relative">
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsNotifOpen(!isNotifOpen)}
+              className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 relative"
+            >
+              <Bell size={16} />
+              {notifications.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-[#0a0a0c]" />
+              )}
+            </motion.button>
+            <AnimatePresence>
+              {isNotifOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 top-full mt-3 w-72 bg-[#12131a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[110]"
+                >
+                  <div className="p-3 border-b border-white/10 flex items-center justify-between bg-white/5">
+                    <h3 className="text-sm font-bold text-white tracking-tight">Activity Log</h3>
+                    {notifications.length > 0 && (
+                      <button onClick={() => setNotifications([])} className="text-[10px] font-bold text-red-400 hover:text-red-300 uppercase tracking-widest transition-colors">Clear All</button>
+                    )}
+                  </div>
+                  <div className="max-h-64 overflow-y-auto p-2 space-y-2">
+                    {notifications.length === 0 ? (
+                      <div className="text-center p-4 text-white/40 text-xs font-semibold">No recent activity</div>
+                    ) : (
+                      notifications.map(n => (
+                        <div key={n.id} className="p-2.5 rounded-xl bg-white/5 border border-white/5 flex flex-col gap-1">
+                          <div className="flex items-center justify-between">
+                            <span className={`text-xs font-bold ${n.type === 'success' ? 'text-emerald-400' : n.type === 'warning' ? 'text-orange-400' : 'text-blue-400'}`}>{n.title}</span>
+                            <span className="text-[9px] text-white/30 font-medium">{new Date(n.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
+                          <span className="text-xs text-indigo-100/70 leading-snug">{n.message}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       )}
 
@@ -127,33 +169,71 @@ const Navbar = ({ searchQuery, setSearchQuery }) => {
         <div className="flex items-center gap-2 md:gap-4 md:pl-4 md:border-l md:border-white/10 w-full justify-between">
           
           <div className="flex items-center gap-2 sm:gap-3">
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10"
-            >
-              <Bell size={20} />
-            </motion.button>
+            <div className="relative">
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsNotifOpen(!isNotifOpen)}
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 relative"
+              >
+                <Bell size={20} />
+                {notifications.length > 0 && (
+                  <span className="absolute top-2 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#0a0a0c]" />
+                )}
+              </motion.button>
+              <AnimatePresence>
+                {isNotifOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 sm:left-1/2 sm:-translate-x-1/2 top-full mt-3 w-80 bg-[#12131a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[110]"
+                  >
+                    <div className="p-3 border-b border-white/10 flex items-center justify-between bg-white/5">
+                      <h3 className="text-sm font-bold text-white tracking-tight">Activity Log</h3>
+                      {notifications.length > 0 && (
+                        <button onClick={() => setNotifications([])} className="text-[10px] font-bold text-red-400 hover:text-red-300 uppercase tracking-widest transition-colors">Clear All</button>
+                      )}
+                    </div>
+                    <div className="max-h-72 overflow-y-auto p-2 space-y-2">
+                      {notifications.length === 0 ? (
+                        <div className="text-center p-6 text-white/40 text-xs font-semibold">No recent activity</div>
+                      ) : (
+                        notifications.map(n => (
+                          <div key={n.id} className="p-3 rounded-xl bg-white/5 border border-white/5 flex flex-col gap-1.5 hover:bg-white/10 transition-colors">
+                            <div className="flex items-center justify-between">
+                              <span className={`text-xs font-bold ${n.type === 'success' ? 'text-emerald-400' : n.type === 'warning' ? 'text-orange-400' : 'text-blue-400'}`}>{n.title}</span>
+                              <span className="text-[10px] text-white/30 font-medium">{new Date(n.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                            <span className="text-sm text-indigo-100/70 leading-snug">{n.message}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {user && (
               <>
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/20 px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-xl text-orange-400 cursor-default"
+                <Link 
+                  to="/profile#streak"
+                  className="flex items-center gap-1.5 bg-orange-500/10 hover:bg-orange-500/20 transition-all border border-orange-500/20 px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-xl text-orange-400 cursor-pointer hover:scale-105 active:scale-95"
                   title={`Current Streak: ${user.currentStreak || 0} days`}
                 >
                   <Flame size={16} className={`${(user.currentStreak || 0) > 0 ? 'animate-pulse text-orange-500' : 'opacity-50'}`} />
                   <span className="text-xs font-bold">{user.currentStreak || 0}</span>
-                </motion.div>
+                </Link>
 
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-1 bg-indigo-500/10 border border-indigo-500/20 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl text-indigo-400"
+                <Link 
+                  to="/profile#level"
+                  className="flex items-center gap-1 bg-indigo-500/10 hover:bg-indigo-500/20 transition-all border border-indigo-500/20 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl text-indigo-400 cursor-pointer hover:scale-105 active:scale-95"
                   title={`XP: ${user.xp || 0}`}
                 >
                   <Star size={14} className="text-indigo-400" />
                   <span className="text-xs font-bold">Lvl {user.level || 1}</span>
-                </motion.div>
+                </Link>
               </>
             )}
           </div>
