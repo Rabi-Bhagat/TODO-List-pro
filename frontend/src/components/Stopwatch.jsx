@@ -46,7 +46,7 @@ const Stopwatch = () => {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card max-w-lg mx-auto p-10 border-white/10"
+      className="glass-card max-w-lg mx-auto p-6 sm:p-10 border-white/10"
     >
       <div className="flex items-center justify-between mb-10">
         <div className="flex items-center gap-3">
@@ -70,13 +70,13 @@ const Stopwatch = () => {
       </div>
 
       {/* Main Display */}
-      <div className="flex flex-col items-center justify-center py-8 mb-10 relative">
+      <div className="flex flex-col items-center justify-center py-6 sm:py-8 mb-8 sm:mb-10 relative">
         <div className="absolute inset-0 bg-indigo-600/5 blur-[80px] rounded-full" />
-        <div className="flex items-baseline gap-2 relative z-10 font-[700] tracking-tighter">
-          <div className="text-7xl md:text-8xl text-white">{timeParts.min}</div>
-          <div className="text-4xl text-white/20">:</div>
-          <div className="text-7xl md:text-8xl text-white">{timeParts.sec}</div>
-          <div className="text-3xl md:text-4xl text-indigo-500 ml-2">{timeParts.ms}</div>
+        <div className="flex items-baseline gap-1 sm:gap-2 relative z-10 font-[700] tracking-tighter">
+          <div className="text-6xl sm:text-7xl md:text-8xl text-white">{timeParts.min}</div>
+          <div className="text-3xl sm:text-4xl text-white/20">:</div>
+          <div className="text-6xl sm:text-7xl md:text-8xl text-white">{timeParts.sec}</div>
+          <div className="text-2xl sm:text-3xl md:text-4xl text-indigo-500 ml-1 sm:ml-2">{timeParts.ms}</div>
         </div>
       </div>
 

@@ -96,7 +96,7 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
         </div>
 
         {/* Right Side: Actions */}
-        <div className="flex flex-col items-end justify-between self-stretch">
+        <div className="flex flex-col items-end justify-between self-stretch shrink-0 ml-1">
           <motion.button 
             whileHover={{ scale: 1.15, backgroundColor: 'rgba(239, 68, 68, 0.2)', rotate: 5 }}
             whileTap={{ scale: 0.85, rotate: -5 }}
@@ -110,7 +110,7 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
           {!task.completed && task.details && (
              <button 
                onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
-               className="flex items-center gap-1 text-[10px] font-black text-indigo-400/50 uppercase tracking-widest hover:text-indigo-400 transition-colors mt-auto focus:outline-none"
+               className="flex items-center gap-1 text-[10px] font-black text-indigo-400/50 uppercase tracking-widest hover:text-indigo-400 transition-colors mt-auto focus:outline-none shrink-0"
              >
                Details 
                {isExpanded ? (

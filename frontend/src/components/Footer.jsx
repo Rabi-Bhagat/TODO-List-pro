@@ -6,7 +6,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full mt-auto relative z-50 pt-16 pb-8 px-6 overflow-hidden">
+    <footer className="w-full mt-auto relative z-50 pt-24 pb-8 px-6 overflow-hidden">
       {/* Subtle top border gradient */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
       
@@ -74,17 +74,6 @@ const Footer = () => {
               {link.icon}
             </a>
           ))}
-        </motion.div>
-
-        {/* Copyright */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="text-xs text-indigo-200/40 font-medium text-center"
-        >
-          © {currentYear} TODO List Pro. All rights reserved.
         </motion.div>
 
       </div>

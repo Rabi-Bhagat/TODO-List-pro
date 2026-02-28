@@ -100,7 +100,7 @@ const Alarm = () => {
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="glass-card max-w-lg mx-auto p-10 border-white/10 relative overflow-hidden"
+      className="glass-card max-w-lg mx-auto p-6 sm:p-10 border-white/10 relative"
     >
       <div className="flex items-center justify-between mb-10">
         <div className="flex items-center gap-3">
@@ -136,15 +136,15 @@ const Alarm = () => {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col gap-8">
-        <div className="relative w-full" ref={dropdownRef}>
+      <div className="flex flex-col gap-6 sm:gap-8 transition-all duration-300 pointer-events-auto" style={{ paddingBottom: showDropdown ? '24rem' : '0' }}>
+        <div className="relative w-full z-20" ref={dropdownRef}>
           <div className="flex bg-white/5 border border-white/10 rounded-3xl overflow-hidden focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/50 transition-all">
             <input 
               type="time" 
               value={targetTime}
               onChange={(e) => setTargetTime(e.target.value)}
               disabled={isActive}
-              className={`flex-1 bg-transparent py-8 pl-8 pr-4 text-4xl sm:text-5xl font-black text-center transition-all appearance-none cursor-pointer focus:outline-none ${
+              className={`flex-1 bg-transparent py-6 sm:py-8 pl-6 sm:pl-8 pr-2 sm:pr-4 text-3xl sm:text-5xl font-black text-center transition-all appearance-none cursor-pointer focus:outline-none ${
                 isActive ? 'opacity-40 grayscale text-white/50' : 'text-white hover:bg-white/5'
               }`}
             />
@@ -153,13 +153,13 @@ const Alarm = () => {
               type="button"
               disabled={isActive}
               onClick={() => setShowDropdown(!showDropdown)}
-              className={`px-4 sm:px-6 flex items-center justify-center border-l w-[80px] sm:w-[100px] border-white/10 transition-colors ${
+              className={`px-3 sm:px-6 flex items-center justify-center border-l w-[70px] sm:w-[100px] border-white/10 transition-colors ${
                 isActive ? 'opacity-40 grayscale cursor-not-allowed' : 'hover:bg-white/10 text-indigo-400'
               }`}
             >
               <div className="flex flex-col items-center">
                 <ChevronDown size={24} className={`transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} />
-                <span className="text-[9px] font-bold uppercase tracking-widest mt-1">Presets</span>
+                <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest mt-1">Presets</span>
               </div>
             </button>
           </div>
@@ -171,7 +171,7 @@ const Alarm = () => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-full left-0 right-0 mt-3 p-2 bg-[#12131a] rounded-2xl border border-white/10 shadow-2xl z-20"
+                className="absolute top-full left-0 right-0 mt-3 p-2 bg-[#12131a] rounded-2xl border border-white/10 shadow-2xl z-[100]"
               >
                 <div className="grid grid-cols-2 gap-2">
                   {[
@@ -198,21 +198,21 @@ const Alarm = () => {
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-4 py-6 bg-white/[0.03] rounded-3xl border border-white/5"
+            className="flex items-center justify-center gap-2 sm:gap-4 py-4 sm:py-6 bg-white/[0.03] rounded-3xl border border-white/5"
           >
             <div className="flex flex-col items-center">
-              <span className="text-2xl font-black text-white">{t.h}</span>
-              <span className="text-[8px] font-bold text-white/20 uppercase">Hours</span>
+              <span className="text-xl sm:text-2xl font-black text-white">{t.h}</span>
+              <span className="text-[7px] sm:text-[8px] font-bold text-white/20 uppercase">Hours</span>
             </div>
-            <span className="text-white/20 font-black mb-4">:</span>
+            <span className="text-white/20 font-black mb-3 sm:mb-4">:</span>
             <div className="flex flex-col items-center">
-              <span className="text-2xl font-black text-white">{t.m}</span>
-              <span className="text-[8px] font-bold text-white/20 uppercase">Minutes</span>
+              <span className="text-xl sm:text-2xl font-black text-white">{t.m}</span>
+              <span className="text-[7px] sm:text-[8px] font-bold text-white/20 uppercase">Minutes</span>
             </div>
-            <span className="text-white/20 font-black mb-4">:</span>
+            <span className="text-white/20 font-black mb-3 sm:mb-4">:</span>
             <div className="flex flex-col items-center">
-              <span className="text-2xl font-black text-indigo-500">{t.s}</span>
-              <span className="text-[8px] font-bold text-indigo-400 uppercase">Seconds</span>
+              <span className="text-xl sm:text-2xl font-black text-indigo-500">{t.s}</span>
+              <span className="text-[7px] sm:text-[8px] font-bold text-indigo-400 uppercase">Seconds</span>
             </div>
           </motion.div>
         )}
