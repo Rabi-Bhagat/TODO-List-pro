@@ -259,6 +259,11 @@ function App() {
           </ProtectedRoute>
         } />
       </Routes>
+      
+      {/* Footer */}
+      <footer className="w-full text-center py-6 text-white/50 text-sm mt-auto z-50 relative pointer-events-auto">
+        Made By <a href="https://rabibhagat.com.np" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors hover:underline">Rabi Bhagat</a>
+      </footer>
     </div>
   );
 }
