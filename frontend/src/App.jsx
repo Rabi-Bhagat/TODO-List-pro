@@ -147,17 +147,17 @@ function App() {
           <ProtectedRoute>
             <main className="pt-12">
               {/* Premium Tabs Navigation */}
-              <div className="bg-white/[0.03] backdrop-blur-xl p-1.5 rounded-2xl border border-white/5 flex gap-1 mb-12 max-w-lg mx-auto shadow-2xl overflow-hidden relative">
+              <div className="bg-white/[0.03] backdrop-blur-xl p-1 sm:p-1.5 rounded-2xl border border-white/5 flex gap-1 mb-12 max-w-[95%] sm:max-w-lg mx-auto shadow-2xl overflow-x-auto hide-scrollbar relative">
                 <AnimatePresence>
                   {[
-                    { id: 'tasks', label: 'Tasks', icon: <ListTodo size={18} /> },
-                    { id: 'stopwatch', label: 'Time Control', icon: <Timer size={18} /> },
-                    { id: 'alarm', label: 'Alerts', icon: <Bell size={18} /> }
+                    { id: 'tasks', label: 'Tasks', icon: <ListTodo size={16} className="sm:w-[18px] sm:h-[18px]" /> },
+                    { id: 'stopwatch', label: 'Time Control', icon: <Timer size={16} className="sm:w-[18px] sm:h-[18px]" /> },
+                    { id: 'alarm', label: 'Alerts', icon: <Bell size={16} className="sm:w-[18px] sm:h-[18px]" /> }
                   ].map(tab => (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`relative flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold tracking-tight transition-all duration-500 z-10 ${
+                      className={`relative flex-1 min-w-[100px] sm:min-w-0 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold tracking-tight transition-all duration-500 z-10 ${
                         activeTab === tab.id ? 'text-white' : 'text-white/40 hover:text-white/70'
                       }`}
                     >
@@ -169,7 +169,7 @@ function App() {
                         />
                       )}
                       {tab.icon}
-                      <span className="hidden sm:inline">{tab.label}</span>
+                      <span className="whitespace-nowrap">{tab.label}</span>
                     </button>
                   ))}
                 </AnimatePresence>
