@@ -32,8 +32,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         try {
             const res = await api.post('/auth/register', formData);
-            localStorage.setItem('token', res.data.token);
-            setUser(res.data.user);
             setError(null);
             return true;
         } catch (err) {
@@ -78,8 +76,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         try {
             const res = await api.post('/auth/verify-otp', { email, otp });
-            localStorage.setItem('token', res.data.token);
-            setUser(res.data.user);
             setError(null);
             return true;
         } catch (err) {

@@ -9,6 +9,7 @@ const Signup = () => {
     const [step, setStep] = useState(1); // 1: Email, 2: OTP
     const [formData, setFormData] = useState({ username: '', email: '', password: '', otp: '' });
     const [loading, setLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
     const { register, sendOTP, verifyOTP, error } = useAuth();
     const navigate = useNavigate();
 
@@ -21,7 +22,10 @@ const Signup = () => {
             password: formData.password 
         });
         setLoading(false);
-        if (success) navigate('/');
+        if (success) {
+            setIsSuccess(true);
+            setTimeout(() => navigate('/login'), 2500);
+        }
     };
 
     const handleSendOTP = async (e) => {
@@ -37,7 +41,10 @@ const Signup = () => {
         setLoading(true);
         const success = await verifyOTP(formData.email, formData.otp);
         setLoading(false);
-        if (success) navigate('/');
+        if (success) {
+            setIsSuccess(true);
+            setTimeout(() => navigate('/login'), 2500);
+        }
     };
 
     return (
@@ -98,7 +105,20 @@ const Signup = () => {
                         )}
                     </AnimatePresence>
 
-                    {mode === 'password' ? (
+                    {isSuccess ? (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-center py-8"
+                        >
+                            <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500/30">
+                                <ShieldCheck className="w-8 h-8 text-emerald-400" />
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Account Created!</h3>
+                            <p className="text-emerald-200/60 text-sm">Validating your profile. Redirecting to sign in...</p>
+                            <Loader2 className="animate-spin w-6 h-6 text-emerald-400 mx-auto mt-6" />
+                        </motion.div>
+                    ) : mode === 'password' ? (
                         <form onSubmit={handlePasswordSignup} className="space-y-5">
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-white/50 uppercase tracking-widest ml-1">Username</label>
