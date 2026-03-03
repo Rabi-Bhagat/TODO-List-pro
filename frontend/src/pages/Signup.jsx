@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserPlus, Mail, Lock, User, AlertCircle, Loader2, Sparkles, ArrowRight, ShieldCheck, KeyRound } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, AlertCircle, Loader2, Sparkles, ArrowRight, ShieldCheck, KeyRound, Eye, EyeOff } from 'lucide-react';
 
 const Signup = () => {
     const [mode, setMode] = useState('password'); // 'password' or 'otp'
     const [step, setStep] = useState(1); // 1: Email, 2: OTP
     const [formData, setFormData] = useState({ username: '', email: '', password: '', otp: '' });
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const { register, sendOTP, verifyOTP, error } = useAuth();
@@ -153,12 +154,19 @@ const Signup = () => {
                                 <div className="relative group">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-blue-400 transition-colors" size={18} />
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         required
-                                                className="w-full bg-[#12131a] border border-white/5 rounded-xl py-4 pl-12 pr-4 text-white text-[15px] placeholder-white/20 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                                        className="w-full bg-[#12131a] border border-white/5 rounded-xl py-4 pl-12 pr-12 text-white text-[15px] placeholder-white/20 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                                         placeholder="••••••••"
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors"
+                                    >
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
                                 </div>
                             </div>
 
