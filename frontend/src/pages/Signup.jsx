@@ -9,7 +9,7 @@ const Signup = () => {
     const [step, setStep] = useState(1); // 1: Email, 2: OTP
     const [formData, setFormData] = useState({ username: '', email: '', password: '', otp: '' });
     const [loading, setLoading] = useState(false);
-    const { register, sendOTP, verifyOTP, error } = useAuth();
+    const { register, sendOTP, verifyOTP, error, logout } = useAuth();
     const navigate = useNavigate();
 
     const handlePasswordSignup = async (e) => {
@@ -21,7 +21,10 @@ const Signup = () => {
             password: formData.password 
         });
         setLoading(false);
-        if (success) navigate('/');
+        if (success) {
+            logout();
+            navigate('/login');
+        }
     };
 
     const handleSendOTP = async (e) => {
@@ -37,7 +40,10 @@ const Signup = () => {
         setLoading(true);
         const success = await verifyOTP(formData.email, formData.otp);
         setLoading(false);
-        if (success) navigate('/');
+        if (success) {
+            logout();
+            navigate('/login');
+        }
     };
 
     return (
