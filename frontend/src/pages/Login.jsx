@@ -24,7 +24,7 @@ const Login = () => {
     const handleSendOTP = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const success = await sendOTP(formData.email);
+        const success = await sendOTP(formData.email, 'login');
         setLoading(false);
         if (success) setStep(2);
     };
@@ -32,7 +32,7 @@ const Login = () => {
     const handleVerifyOTP = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const success = await verifyOTP(formData.email, formData.otp);
+        const success = await verifyOTP(formData.email, formData.otp, 'login');
         setLoading(false);
         if (success) navigate('/');
     };
@@ -149,14 +149,14 @@ const Login = () => {
                             {step === 1 ? (
                                 <form onSubmit={handleSendOTP} className="space-y-6">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-indigo-300/80 uppercase tracking-widest ml-1">Gmail Account</label>
+                                        <label className="text-xs font-bold text-indigo-300/80 uppercase tracking-widest ml-1">Email for OTP</label>
                                         <div className="relative group">
                                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-indigo-400 transition-colors" size={18} />
                                             <input
                                                 type="email"
                                                 required
                                                         className="w-full bg-[#12131a] border border-white/5 rounded-xl py-4 pl-12 pr-4 text-white text-[15px] placeholder-white/20 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all"
-                                                placeholder="example@gmail.com"
+                                                placeholder="example@email.com"
                                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             />
                                         </div>

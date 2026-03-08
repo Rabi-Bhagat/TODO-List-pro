@@ -58,10 +58,10 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const sendOTP = async (email) => {
+    const sendOTP = async (email, type) => {
         setLoading(true);
         try {
-            await api.post('/auth/send-otp', { email });
+            await api.post('/auth/send-otp', { email, type });
             setError(null);
             return true;
         } catch (err) {
@@ -72,10 +72,10 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const verifyOTP = async (email, otp) => {
+    const verifyOTP = async (email, otp, type, username) => {
         setLoading(true);
         try {
-            const res = await api.post('/auth/verify-otp', { email, otp });
+            const res = await api.post('/auth/verify-otp', { email, otp, type, username });
             setError(null);
             return true;
         } catch (err) {

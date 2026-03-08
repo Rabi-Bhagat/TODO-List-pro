@@ -19,10 +19,21 @@ const transporter = nodemailer.createTransport({
 // @route   POST api/auth/send-otp
 // @desc    Send OTP to email
 router.post('/send-otp', async (req, res) => {
-    const { email } = req.body;
+    const { email, type } = req.body;
     if (!email) return res.status(400).json({ msg: 'Email is required' });
 
     try {
+        // Check user existence based on flow type
+        const userExists = await User.findOne({ email });
+        
+        if (type === 'login' && !userExists) {
+            return res.status(400).json({ msg: 'Account not found. Please sign up.' });
+        }
+        
+        if (type === 'signup' && userExists) {
+            return res.status(400).json({ msg: 'Account already exists. Please log in.' });
+        }
+
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
         
         // Save OTP to DB
@@ -53,18 +64,37 @@ router.post('/send-otp', async (req, res) => {
             `
         };
 
-        await transporter.sendMail(mailOptions);
+        // Wrap sendMail in a Promise with a timeout
+        const sendMailWithTimeout = () => {
+            return new Promise((resolve, reject) => {
+                const timeoutId = setTimeout(() => {
+                    reject(new Error('Email server timeout. Please check SMTP settings.'));
+                }, 8000); // 8 seconds timeout
+
+                transporter.sendMail(mailOptions)
+                    .then((info) => {
+                        clearTimeout(timeoutId);
+                        resolve(info);
+                    })
+                    .catch((err) => {
+                        clearTimeout(timeoutId);
+                        reject(err);
+                    });
+            });
+        };
+
+        await sendMailWithTimeout();
         res.json({ msg: 'OTP sent successfully' });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
+        console.error('OTP Send Error:', err.message);
+        res.status(500).json({ msg: err.message || 'Server error while sending OTP' });
     }
 });
 
 // @route   POST api/auth/verify-otp
 // @desc    Verify OTP and LogIn/Register
 router.post('/verify-otp', async (req, res) => {
-    const { email, otp } = req.body;
+    const { email, otp, type, username } = req.body;
 
     try {
         const otpRecord = await OTP.findOne({ email });
@@ -79,11 +109,17 @@ router.post('/verify-otp', async (req, res) => {
         let user = await User.findOne({ email });
 
         if (!user) {
-            // Register new user
-            const username = email.split('@')[0] + Math.floor(Math.random() * 1000);
+            if (type === 'login') {
+                return res.status(400).json({ msg: 'Account not found. Please sign up.' });
+            }
+            
+            // Register new user (Signup flow)
+            const newUsername = username || (email.split('@')[0] + Math.floor(Math.random() * 1000));
             const password = Math.random().toString(36).slice(-8); // Random placeholder password
-            user = new User({ username, email, password });
+            user = new User({ username: newUsername, email, password });
             await user.save();
+        } else if (type === 'signup') {
+            return res.status(400).json({ msg: 'Account already exists. Please log in.' });
         }
 
         const payload = { user: { id: user.id } };
@@ -92,8 +128,8 @@ router.post('/verify-otp', async (req, res) => {
             res.json({ token, user: { id: user.id, username: user.username, email: user.email, xp: user.xp, level: user.level, currentStreak: user.currentStreak, activeDates: user.activeDates } });
         });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
+        console.error('OTP Verify Error:', err.message);
+        res.status(500).json({ msg: 'Server error while verifying OTP' });
     }
 });
 

@@ -32,7 +32,7 @@ const Signup = () => {
     const handleSendOTP = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const success = await sendOTP(formData.email);
+        const success = await sendOTP(formData.email, 'signup');
         setLoading(false);
         if (success) setStep(2);
     };
@@ -40,7 +40,7 @@ const Signup = () => {
     const handleVerifyOTP = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const success = await verifyOTP(formData.email, formData.otp);
+        const success = await verifyOTP(formData.email, formData.otp, 'signup', formData.username);
         setLoading(false);
         if (success) {
             setIsSuccess(true);
@@ -190,7 +190,7 @@ const Signup = () => {
                                                 type="email"
                                                 required
                                                 className="w-full bg-[#12131a] border border-white/5 rounded-xl py-4 pl-12 pr-4 text-white text-[15px] placeholder-white/20 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all"
-                                                placeholder="example@gmail.com"
+                                                placeholder="example@email.com"
                                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             />
                                         </div>
